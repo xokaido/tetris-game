@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Classic Tetris game with modern design - Play the legendary puzzle game">
+  <meta name="theme-color" content="#0f0f23">
+  <title>TETRIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Header -->
+    <header class="game-header">
+      <h1 class="game-title" data-i18n="title">TETRIS</h1>
+      <div class="language-selector">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="ka">GE</button>
+      </div>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="game-main">
+      <!-- Left Panel - Stats -->
+      <aside class="side-panel stats-panel">
+        <div class="stat-box">
+          <span class="stat-label" data-i18n="score">Score</span>
+          <span class="stat-value" id="score-value">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label" data-i18n="level">Level</span>
+          <span class="stat-value" id="level-value">1</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label" data-i18n="lines">Lines</span>
+          <span class="stat-value" id="lines-value">0</span>
+        </div>
+        <div class="stat-box highscore-box">
+          <span class="stat-label" data-i18n="highScore">High Score</span>
+          <span class="stat-value highscore" id="highscore-value">0</span>
+        </div>
+      </aside>
+
+      <!-- Game Board -->
+      <div class="game-board-container">
+        <canvas id="game-canvas"></canvas>
+        <div class="board-border"></div>
+      </div>
+
+      <!-- Right Panel - Next & Controls -->
+      <aside class="side-panel preview-panel">
+        <div class="preview-box">
+          <span class="preview-label" data-i18n="next">Next</span>
+          <canvas id="preview-canvas"></canvas>
+        </div>
+        
+        <div class="controls-box">
+          <button class="game-btn primary" id="start-btn" data-i18n="start">Start Game</button>
+          <button class="game-btn" id="pause-btn" data-i18n="pause" style="display: none;">Pause</button>
+          <button class="game-btn" id="restart-btn" data-i18n="restart">Restart</button>
+        </div>
+        
+        <div class="settings-box">
+          <button class="settings-btn" id="sound-toggle">Sound: ON</button>
+          <button class="settings-btn" id="music-toggle">Music: ON</button>
+        </div>
+        
+        <div class="controls-hint desktop-only">
+          <p class="hint-text" data-i18n="controlsDesc">← → Move | ↑ Rotate | ↓ Soft Drop | Space Hard Drop | P Pause</p>
+        </div>
+        
+        <div class="controls-hint mobile-only">
+          <p class="hint-text" data-i18n="tapToRotate">Tap to rotate</p>
+          <p class="hint-text" data-i18n="swipeToMove">Swipe to move</p>
+          <p class="hint-text" data-i18n="swipeDownToDrop">Swipe down to drop</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div class="modal" id="gameover-modal">
+    <div class="modal-content">
+      <h2 class="modal-title" data-i18n="gameOver">Game Over</h2>
+      <p class="new-highscore" id="new-highscore" data-i18n="newHighScore" style="display: none;">🎉 New High Score! 🎉</p>
+      
+      <div class="final-stats">
+        <div class="final-stat">
+          <span class="final-label" data-i18n="score">Score</span>
+          <span class="final-value" id="final-score">0</span>
+        </div>
+        <div class="final-stat">
+          <span class="final-label" data-i18n="level">Level</span>
+          <span class="final-value" id="final-level">1</span>
+        </div>
+        <div class="final-stat">
+          <span class="final-label" data-i18n="lines">Lines</span>
+          <span class="final-value" id="final-lines">0</span>
+        </div>
+      </div>
+      
+      <button class="game-btn primary modal-btn" id="play-again-btn" data-i18n="restart">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
