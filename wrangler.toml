@@ -7,3 +7,7 @@ bucket = "./dist"
 
 [build]
 command = "npm run build"
+
+routes = [
+  { pattern = "tetris.menuhub.me", custom_domain = true }
+]
