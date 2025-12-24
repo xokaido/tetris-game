@@ -1,9 +1,13 @@
-// Cloudflare Worker entry script for Tetris game
-// This serves static assets and provides API endpoints for future server-side functionality
+import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import manifestJSON from '__STATIC_CONTENT_MANIFEST';
+const assetManifest = JSON.parse(manifestJSON);
 
 export interface Env {
   // Add bindings here as needed (KV, D1, R2, etc.)
   // SCORES_KV: KVNamespace;
+  __STATIC_CONTENT: unknown;
 }
 
 interface ExecutionContext {
@@ -12,7 +16,7 @@ interface ExecutionContext {
 }
 
 export default {
-  async fetch(request: Request, _env: Env, _ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     // API routes for future server-side functionality
@@ -20,9 +24,35 @@ export default {
       return handleApiRequest(request, url);
     }
 
-    // For static assets, return null to let Cloudflare serve from the bucket
-    // This Worker runs alongside the static asset serving configured in wrangler.toml
-    return new Response('Not Found', { status: 404 });
+    try {
+      // Serve static assets from KV
+      return await getAssetFromKV({
+        request,
+        waitUntil: ctx.waitUntil.bind(ctx)
+      }, {
+        ASSET_NAMESPACE: env.__STATIC_CONTENT,
+        ASSET_MANIFEST: assetManifest
+      });
+    } catch (e) {
+      if (e instanceof Error) {
+        // Fallback for SPA: serve index.html for unknown routes not starting with /api
+        // But for now, let's just return 404 if asset not found to be safe, 
+        // or try to serve index.html if it's a navigation request.
+        // For a game, typically we just want to load index.html.
+        /*
+        try {
+           return await getAssetFromKV({
+             request: new Request(new URL('/index.html', request.url), request),
+             waitUntil: ctx.waitUntil.bind(ctx)
+           }, {
+             ASSET_NAMESPACE: env.__STATIC_CONTENT,
+             ASSET_MANIFEST: assetManifest
+           });
+        } catch {}
+        */
+      }
+      return new Response('Not Found: ' + (e instanceof Error ? e.message : 'Unknown Error'), { status: 404 });
+    }
   },
 };
 
